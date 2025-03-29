@@ -1,0 +1,17 @@
+[project]
+name = "nanollada"
+version = "0.1.0"
+description = "Fine-tuning Large Language Diffusion Models"
+authors = [
+    {name = "pupipatsk",email = "pupipat.sk@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = "^3.11"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
