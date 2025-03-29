@@ -1,6 +1,8 @@
 # NanoLLaDA: Fine-tuning LLaDA
 This project involves fine-tuning LLaDA (*L*arge *La*nguage *D*iffusion with m*A*sking) as the final project for the Natural Language Processing (NLP) Systems course (2025) at Chulalongkorn University.
 
+Dataset: [nakhun/thaisum](https://huggingface.co/datasets/nakhun/thaisum)
+
 ## Setup
 This project uses:
 - **Python 3.11**
@@ -40,6 +42,7 @@ poetry run ipython kernel install --user --name=nanollada --display-name "Python
 ## References
 - [LLaDA Paper (arXiv:2502.09992)](https://arxiv.org/abs/2502.09992)
 - [Official LLaDA Repository](https://github.com/ML-GSAI/LLaDA)
+- [ThaiSum Dataset](https://huggingface.co/datasets/nakhun/thaisum)
 
 ## Contributors
 - [Kawin Rattanapun](https://github.com/athensclub)
