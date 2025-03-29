@@ -3,12 +3,13 @@ name = "nanollada"
 version = "0.1.0"
 description = "Fine-tuning Large Language Diffusion Models"
 authors = [
-    {name = "pupipatsk",email = "pupipat.sk@gmail.com"}
 ]
-license = {text = "MIT"}
+license = "MIT"
 readme = "README.md"
 requires-python = "^3.11"
 dependencies = [
+    "pandas (>=2.2.3,<3.0.0)",
+    "numpy (>=2.2.4,<3.0.0)"
 ]
 
 
