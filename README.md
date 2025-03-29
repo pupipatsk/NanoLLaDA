@@ -2,8 +2,9 @@
 This project involves fine-tuning LLaDA (*L*arge *La*nguage *D*iffusion with m*A*sking) as the final project for the Natural Language Processing (NLP) Systems course (2025) at Chulalongkorn University.
 
 ## Setup
-This project uses [Poetry](https://python-poetry.org/) for dependency management and packaging.
-Make sure you have **Python 3.11** and **Poetry** installed before continuing.
+This project uses:
+- **Python 3.11**
+- **[Poetry](https://python-poetry.org/)**: for dependency management and packaging
 
 ### Install Poetry
 Poetry Installation Docs: https://python-poetry.org/docs/#installation
@@ -39,3 +40,9 @@ poetry run ipython kernel install --user --name=nanollada --display-name "Python
 ## References
 - [LLaDA Paper (arXiv:2502.09992)](https://arxiv.org/abs/2502.09992)
 - [Official LLaDA Repository](https://github.com/ML-GSAI/LLaDA)
+
+## Contributors
+- [Kawin Rattanapun](https://github.com/athensclub)
+- [Chanatip Pattanapen](https://github.com/demonstem)
+- [Pupipat Singkhorn](https://github.com/pupipatsk)
+- [Chotpisit Adunsehawat](https://github.com/Nacnano)

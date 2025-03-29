@@ -3,13 +3,20 @@ name = "nanollada"
 version = "0.1.0"
 description = "Fine-tuning Large Language Diffusion Models"
 authors = [
-    {name = "pupipatsk",email = "pupipat.sk@gmail.com"}
+    {name = "Pupipat Singkhorn",email = "pupipat.sk@gmail.com"},
+    {name = "Kawin Rattanapun"},
+    {name = "Chanatip Pattanapen"},
+    {name = "Chotpisit Adunsehawat"},
 ]
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "pandas (>=2.2.3,<3.0.0)",
-    "numpy (>=2.2.4,<3.0.0)"
+    "numpy (>=2.2.4,<3.0.0)",
+    "torch (>=2.6.0,<3.0.0)",
+    "datasets (>=3.5.0,<4.0.0)",
+    "transformers (>=4.50.3,<5.0.0)",
+    "tqdm (>=4.67.1,<5.0.0)"
 ]
 
 [tool.poetry]
