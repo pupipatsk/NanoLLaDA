@@ -22,11 +22,9 @@ export default function ThaiTextSummarizer() {
     setSummary("");
 
     try {
-      // This is where you would make the actual API call to Modal.com
-      // For demonstration purposes, I'm simulating an API call with a timeout
+      // Simulating an API call with a timeout
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Replace this with your actual API call
       // const response = await fetch('your-modal-api-endpoint', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
@@ -37,7 +35,7 @@ export default function ThaiTextSummarizer() {
       // const data = await response.json()
       // setSummary(data.summary)
 
-      // Simulated response for demonstration
+      // Simulated response
       setSummary(
         `นี่คือตัวอย่างบทสรุปสำหรับข้อความที่คุณป้อน ในการใช้งานจริง บทสรุปจะถูกสร้างโดย API ที่เชื่อมต่อกับ Modal.com`
       );
