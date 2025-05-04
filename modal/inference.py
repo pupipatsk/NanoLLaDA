@@ -1,6 +1,7 @@
 # -- Imports --
 import os
 from pathlib import Path
+from pydantic import BaseModel
 import pandas as pd
 import torch
 import torch.nn.functional as F
@@ -20,6 +21,16 @@ MODEL_DIR = Path("/models")
 
 model_id = "pupipatsk/llada-thaisum-finetuned"
 model_path = os.path.join(MODEL_DIR, model_id)
+
+image = modal.Image.debian_slim(python_version="3.11").pip_install(
+    "pandas",
+    "torch",
+    "datasets",
+    "tqdm",
+    "transformers",
+    "huggingface_hub",
+    "fastapi[standard]"
+)
 
 def select_device():
     """Selects the best available device (CUDA, MPS, or CPU)."""
@@ -106,10 +117,18 @@ def generate(model, prompt, steps=128, gen_length=128, block_length=128, tempera
 
     return x
 
-@app.cls(gpu="A100-80GB", volumes={MODEL_DIR: weight_volume})
+class InferenceRequest(BaseModel):
+    prompt: str
+    
+class InferenceResponse(BaseModel):
+    summary: str
+
+@app.cls(gpu="A100-80GB", volumes={MODEL_DIR: weight_volume}, image=image)
 class Model:
     @modal.enter()
     def setup(self):
+        self.device = select_device()
+        
         tokenizer = AutoTokenizer.from_pretrained(
             model_path,
             trust_remote_code=True,
@@ -124,17 +143,17 @@ class Model:
             torch_dtype=torch.bfloat16,
             local_files_only=True  # Ensure it only loads from local volume
         )
-        model.to(select_device())
+        model.to(self.device)
         model.eval()
         self.model = model
 
-    @modal.method()
-    def inference(self, prompt):
-        messages = [{"role": "user", "content": self.prompt_text}]
+    @modal.fastapi_endpoint(method="POST")
+    def inference(self, req: InferenceRequest):
+        messages = [{"role": "user", "content": req.prompt}]
         prompt = self.tokenizer.apply_chat_template(
             messages, add_generation_prompt=True, tokenize=False
         )
-        input_ids = torch.tensor(self.tokenizer(prompt)["input_ids"]).to(config.device).unsqueeze(0)
+        input_ids = torch.tensor(self.tokenizer(prompt)["input_ids"]).to(self.device).unsqueeze(0)
         output_ids = generate(
             self.model,
             input_ids,
@@ -149,4 +168,4 @@ class Model:
         summary = self.tokenizer.batch_decode(
             output_ids[:, input_ids.shape[1] :], skip_special_tokens=True
         )[0]
-        return summary
+        return InferenceResponse(summary=summary)
