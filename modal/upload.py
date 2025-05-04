@@ -21,7 +21,7 @@ inference_image =  modal.Image.debian_slim().pip_install("transformers")
     image=download_image,  # only download dependencies needed here
 )
 def download_model(
-    repo_id: str="hf-internal-testing/tiny-random-GPTNeoXForCausalLM",
+    repo_id: str="pupipatsk/llada-thaisum-finetuned",
     revision: str=None,  # include a revision to prevent surprises!
     ):
     from huggingface_hub import snapshot_download
