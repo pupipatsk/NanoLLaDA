@@ -1,103 +1,189 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Loader2, Copy, CheckCircle2 } from "lucide-react"
+import { motion } from "framer-motion"
+import { ThemeToggle } from "@/components/theme-toggle"
+
+export default function ThaiTextSummarizer() {
+  const [inputText, setInputText] = useState("")
+  const [summary, setSummary] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [copied, setCopied] = useState(false)
+
+  const handleSummarize = async () => {
+    if (!inputText.trim()) return
+
+    setIsLoading(true)
+    setError(null)
+    setSummary("")
+
+    try {
+      // This is where you would make the actual API call to Modal.com
+      // For demonstration purposes, I'm simulating an API call with a timeout
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // Replace this with your actual API call
+      // const response = await fetch('your-modal-api-endpoint', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ text: inputText })
+      // })
+      //
+      // if (!response.ok) throw new Error('Failed to get summary')
+      // const data = await response.json()
+      // setSummary(data.summary)
+
+      // Simulated response for demonstration
+      setSummary(`นี่คือตัวอย่างบทสรุปสำหรับข้อความที่คุณป้อน ในการใช้งานจริง บทสรุปจะถูกสร้างโดย API ที่เชื่อมต่อกับ Modal.com`)
+    } catch (err) {
+      setError("เกิดข้อผิดพลาดในการสรุปผล กรุณาลองใหม่")
+      console.error("Error fetching summary:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const copyToClipboard = () => {
+    if (!summary) return
+    navigator.clipboard
+      .writeText(summary)
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+      .catch((err) => {
+        console.error("Failed to copy:", err)
+      })
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
+      <div className="max-w-5xl mx-auto p-4 md:p-8">
+        <motion.header
+          className="mb-10 text-center"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h1 className="font-outfit text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent tracking-tight">
+            เครื่องมือสรุปข้อความภาษาไทย
+          </h1>
+          <p className="font-outfit text-slate-600 dark:text-slate-400 mt-2 text-lg font-light tracking-wide">
+            Thai Text Summarizer
+          </p>
+        </motion.header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Input Section */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <Card className="overflow-hidden border-0 shadow-lg bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm">
+              <CardHeader className="bg-gradient-to-r from-blue-500 to-violet-500 text-white">
+                <CardTitle className="text-xl font-outfit font-semibold tracking-wide">ป้อนข้อความภาษาไทย</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div className="relative">
+                    <textarea
+                      className="w-full h-64 p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-inner focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-y font-noto-thai text-base leading-relaxed"
+                      placeholder="วางข้อความภาษาไทยที่นี่..."
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                    />
+                    <div className="absolute bottom-3 right-3 text-xs text-slate-400 font-outfit">
+                      {inputText.length} ตัวอักษร
+                    </div>
+                  </div>
+                  <Button
+                    onClick={handleSummarize}
+                    disabled={isLoading || !inputText.trim()}
+                    className="w-full py-6 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-outfit font-semibold rounded-xl shadow-md transition-all duration-200 hover:shadow-lg"
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center justify-center">
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        <span className="font-noto-thai">กำลังสรุปผล...</span>
+                      </div>
+                    ) : (
+                      <span className="font-noto-thai text-lg tracking-wide">สรุปข้อความ</span>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Output Section */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
-            Read our docs
-          </a>
+            <Card className="overflow-hidden border-0 shadow-lg bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm h-full">
+              <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-500 text-white flex flex-row justify-between items-center">
+                <CardTitle className="text-xl font-outfit font-semibold tracking-wide">บทสรุป</CardTitle>
+                {summary && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={copyToClipboard}
+                    className="text-white hover:text-white/80 hover:bg-white/10 font-outfit"
+                  >
+                    {copied ? <CheckCircle2 className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
+                  </Button>
+                )}
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="w-full min-h-[16rem] rounded-xl bg-white/50 dark:bg-slate-800/50 backdrop-blur-sm">
+                  {isLoading ? (
+                    <div className="flex flex-col items-center justify-center h-64 text-slate-500">
+                      <div className="relative w-16 h-16">
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
+                        </div>
+                        <div className="absolute inset-0 rounded-full border-t-2 border-blue-500 animate-ping opacity-20"></div>
+                      </div>
+                      <p className="mt-4 text-slate-500 dark:text-slate-400 font-noto-thai">กำลังสรุปผล โปรดรอสักครู่...</p>
+                    </div>
+                  ) : error ? (
+                    <motion.div
+                      className="flex items-center justify-center h-64 text-red-500 p-4 text-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p className="font-noto-thai">{error}</p>
+                    </motion.div>
+                  ) : summary ? (
+                    <motion.div
+                      className="p-6 h-64 overflow-auto"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <p className="whitespace-pre-line text-slate-700 dark:text-slate-300 leading-relaxed font-noto-thai text-base">
+                        {summary}
+                      </p>
+                    </motion.div>
+                  ) : (
+                    <div className="flex items-center justify-center h-64 text-slate-400 dark:text-slate-500">
+                      <p className="font-noto-thai">บทสรุปจะแสดงที่นี่...</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      <ThemeToggle />
     </div>
-  );
+  )
 }
