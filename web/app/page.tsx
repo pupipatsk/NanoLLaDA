@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, Copy, CheckCircle2 } from "lucide-react"
-import { motion } from "framer-motion"
-import { ThemeToggle } from "@/components/theme-toggle"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Loader2, Copy, CheckCircle2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function ThaiTextSummarizer() {
-  const [inputText, setInputText] = useState("")
-  const [summary, setSummary] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [copied, setCopied] = useState(false)
+  const [inputText, setInputText] = useState("");
+  const [summary, setSummary] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const handleSummarize = async () => {
-    if (!inputText.trim()) return
+    if (!inputText.trim()) return;
 
-    setIsLoading(true)
-    setError(null)
-    setSummary("")
+    setIsLoading(true);
+    setError(null);
+    setSummary("");
 
     try {
       // This is where you would make the actual API call to Modal.com
       // For demonstration purposes, I'm simulating an API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // Replace this with your actual API call
       // const response = await fetch('your-modal-api-endpoint', {
@@ -38,27 +38,29 @@ export default function ThaiTextSummarizer() {
       // setSummary(data.summary)
 
       // Simulated response for demonstration
-      setSummary(`นี่คือตัวอย่างบทสรุปสำหรับข้อความที่คุณป้อน ในการใช้งานจริง บทสรุปจะถูกสร้างโดย API ที่เชื่อมต่อกับ Modal.com`)
+      setSummary(
+        `นี่คือตัวอย่างบทสรุปสำหรับข้อความที่คุณป้อน ในการใช้งานจริง บทสรุปจะถูกสร้างโดย API ที่เชื่อมต่อกับ Modal.com`
+      );
     } catch (err) {
-      setError("เกิดข้อผิดพลาดในการสรุปผล กรุณาลองใหม่")
-      console.error("Error fetching summary:", err)
+      setError("เกิดข้อผิดพลาดในการสรุปผล กรุณาลองใหม่");
+      console.error("Error fetching summary:", err);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const copyToClipboard = () => {
-    if (!summary) return
+    if (!summary) return;
     navigator.clipboard
       .writeText(summary)
       .then(() => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
       })
       .catch((err) => {
-        console.error("Failed to copy:", err)
-      })
-  }
+        console.error("Failed to copy:", err);
+      });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
@@ -86,7 +88,9 @@ export default function ThaiTextSummarizer() {
           >
             <Card className="overflow-hidden border-0 shadow-lg bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm">
               <CardHeader className="bg-gradient-to-r from-blue-500 to-violet-500 text-white">
-                <CardTitle className="text-xl font-outfit font-semibold tracking-wide">ป้อนข้อความภาษาไทย</CardTitle>
+                <CardTitle className="text-xl font-outfit font-semibold tracking-wide">
+                  ป้อนข้อความภาษาไทย
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-4">
@@ -112,7 +116,9 @@ export default function ThaiTextSummarizer() {
                         <span className="font-noto-thai">กำลังสรุปผล...</span>
                       </div>
                     ) : (
-                      <span className="font-noto-thai text-lg tracking-wide">สรุปข้อความ</span>
+                      <span className="font-noto-thai text-lg tracking-wide">
+                        สรุปข้อความ
+                      </span>
                     )}
                   </Button>
                 </div>
@@ -128,7 +134,9 @@ export default function ThaiTextSummarizer() {
           >
             <Card className="overflow-hidden border-0 shadow-lg bg-white/80 dark:bg-slate-800/50 backdrop-blur-sm h-full">
               <CardHeader className="bg-gradient-to-r from-violet-500 to-purple-500 text-white flex flex-row justify-between items-center">
-                <CardTitle className="text-xl font-outfit font-semibold tracking-wide">บทสรุป</CardTitle>
+                <CardTitle className="text-xl font-outfit font-semibold tracking-wide">
+                  บทสรุป
+                </CardTitle>
                 {summary && (
                   <Button
                     variant="ghost"
@@ -136,7 +144,11 @@ export default function ThaiTextSummarizer() {
                     onClick={copyToClipboard}
                     className="text-white hover:text-white/80 hover:bg-white/10 font-outfit"
                   >
-                    {copied ? <CheckCircle2 className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
+                    {copied ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : (
+                      <Copy className="h-5 w-5" />
+                    )}
                   </Button>
                 )}
               </CardHeader>
@@ -150,7 +162,9 @@ export default function ThaiTextSummarizer() {
                         </div>
                         <div className="absolute inset-0 rounded-full border-t-2 border-blue-500 animate-ping opacity-20"></div>
                       </div>
-                      <p className="mt-4 text-slate-500 dark:text-slate-400 font-noto-thai">กำลังสรุปผล โปรดรอสักครู่...</p>
+                      <p className="mt-4 text-slate-500 dark:text-slate-400 font-noto-thai">
+                        กำลังสรุปผล โปรดรอสักครู่...
+                      </p>
                     </div>
                   ) : error ? (
                     <motion.div
@@ -185,5 +199,5 @@ export default function ThaiTextSummarizer() {
       </div>
       <ThemeToggle />
     </div>
-  )
+  );
 }
