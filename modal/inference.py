@@ -194,7 +194,7 @@ class Model:
             steps=256,
             gen_length=256,
             block_length=32,
-            temperature=0.5,
+            temperature=0.7,
             cfg_scale=0.0,
             remasking="low_confidence",
             mask_id=mask_token_id,
