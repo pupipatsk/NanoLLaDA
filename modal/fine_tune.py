@@ -9,8 +9,7 @@ from datasets import Dataset, DatasetDict
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
-import numpy as np
-import modal 
+import modal
 
 app = modal.App("fine-tune-llada")
 
@@ -41,6 +40,7 @@ image = modal.Image.debian_slim(python_version="3.11").pip_install(
     "huggingface_hub",
 )
 
+
 def select_device():
     """Selects the best available device (CUDA, MPS, or CPU)."""
     if torch.cuda.is_available():
@@ -53,7 +53,12 @@ def select_device():
     return device
 
 
-def load_dataset_from_csv(train_file: str = None, valid_file: str = None, test_file: str = None, sample_size: int = None) -> DatasetDict:
+def load_dataset_from_csv(
+    train_file: str = None,
+    valid_file: str = None,
+    test_file: str = None,
+    sample_size: int = None,
+) -> DatasetDict:
     """Loads dataset splits from CSV files and optionally samples rows."""
     split_files = {"train": train_file, "validation": valid_file, "test": test_file}
     dct = {}
@@ -65,32 +70,39 @@ def load_dataset_from_csv(train_file: str = None, valid_file: str = None, test_f
             dct[split] = Dataset.from_pandas(df)
     return DatasetDict(dct)
 
+
 def format_llada_prompt(example, tokenizer):
     """Formats an example into a prompt for the LLaDA model and tokenizes it."""
     instruction = f"<start_id>user<end_id>\nสรุปข้อความต่อไปนี้\n{example['body']}<eot_id><start_id>assistant<end_id>\n{example['summary']}<EOS>"
-    tokenized = tokenizer(instruction, padding="max_length", truncation=True, max_length=2048)
+    tokenized = tokenizer(
+        instruction, padding="max_length", truncation=True, max_length=2048
+    )
     prompt_end = instruction.find("<start_id>assistant<end_id>")
     prompt_tokens = tokenizer(instruction[:prompt_end])["input_ids"]
     return {"input_ids": tokenized["input_ids"], "prompt_length": len(prompt_tokens)}
 
+
 def load_and_preprocess_data(sample_size: int = 100) -> tuple:
     """Loads and preprocesses the dataset, saving tokenized data to disk."""
     train_data_file = os.path.join(DATA_DIR, "train.csv")
-    dataset_dict = load_dataset_from_csv(train_file=train_data_file, sample_size=sample_size)
+    dataset_dict = load_dataset_from_csv(
+        train_file=train_data_file, sample_size=sample_size
+    )
     tokenizer = AutoTokenizer.from_pretrained(
         model_path,
         trust_remote_code=True,
-        # torch_dtype=torch.bfloat16,
-        local_files_only=True
+        torch_dtype=torch.bfloat16,
+        local_files_only=True,
     )
 
     os.makedirs(tokenized_data_dir, exist_ok=True)
-    processed_data = dataset_dict["train"].map(lambda x: format_llada_prompt(x, tokenizer))
+    processed_data = dataset_dict["train"].map(
+        lambda x: format_llada_prompt(x, tokenizer)
+    )
     output_path = os.path.join(tokenized_data_dir, "train.jsonl")
     processed_data.to_json(output_path)
     print(f"Saved tokenized data to: {output_path}")
     return processed_data, tokenizer
-
 
 
 # DataLoader Collate Function
@@ -100,8 +112,16 @@ def collate_fn(batch):
     prompt_lengths = torch.tensor([item["prompt_length"] for item in batch])
     return {"input_ids": input_ids, "prompt_lengths": prompt_lengths}
 
+
 # Training Function
-def train_model(model: AutoModel, dataloader: DataLoader, optimizer: AdamW, num_epochs: int, device: str, mask_token_id: int):
+def train_model(
+    model: AutoModel,
+    dataloader: DataLoader,
+    optimizer: AdamW,
+    num_epochs: int,
+    device: str,
+    mask_token_id: int,
+):
     """Trains the model using a masked language modeling approach."""
     for epoch in range(num_epochs):
         pbar = tqdm(dataloader, desc=f"Epoch {epoch + 1}/{num_epochs}")
@@ -112,15 +132,20 @@ def train_model(model: AutoModel, dataloader: DataLoader, optimizer: AdamW, num_
             # Create noisy batch by masking post-prompt tokens
             noisy_batch = input_ids.clone()
             for i in range(noisy_batch.shape[0]):
-                noisy_batch[i, prompt_lengths[i]:] = mask_token_id
-            mask_index = (noisy_batch == mask_token_id)
+                noisy_batch[i, prompt_lengths[i] :] = mask_token_id
+            mask_index = noisy_batch == mask_token_id
 
             # Forward pass
             logits = model(input_ids=noisy_batch).logits
             p_mask = torch.ones_like(noisy_batch, dtype=torch.float32).to(device)
 
             # Compute loss only on masked tokens
-            token_loss = F.cross_entropy(logits[mask_index], input_ids[mask_index], reduction="none") / p_mask[mask_index]
+            token_loss = (
+                F.cross_entropy(
+                    logits[mask_index], input_ids[mask_index], reduction="none"
+                )
+                / p_mask[mask_index]
+            )
             loss = token_loss.sum() / input_ids.shape[0]
 
             # Backward pass
@@ -131,34 +156,45 @@ def train_model(model: AutoModel, dataloader: DataLoader, optimizer: AdamW, num_
             pbar.set_postfix(loss=loss.item())
 
 
-@app.function(volumes={MODEL_DIR: weight_volume, DATA_DIR: data_volume}, image=image, gpu="A100-80GB", timeout=18000)
+@app.function(
+    volumes={MODEL_DIR: weight_volume, DATA_DIR: data_volume},
+    image=image,
+    gpu="A100-80GB",
+    timeout=18000,
+    secrets=[modal.Secret.from_name("HUGGINGFACE_TOKEN")],
+)
 def run_finetune():
     # Load and preprocess data
-    processed_data, tokenizer = load_and_preprocess_data(config, sample_size=4000)
-    
+    processed_data, _ = load_and_preprocess_data(sample_size=10)
+
+    # result = tokenizer(
+    #     "Test Input", padding="max_length", truncation=True, max_length=2048
+    # )
+    # print("Tokenize result", result)
+
     # Model Loading
     model = AutoModel.from_pretrained(
         model_path,
         trust_remote_code=True,
         torch_dtype=torch.bfloat16,
-        local_files_only=True  # Ensure it only loads from local volume
+        local_files_only=True,  # Ensure it only loads from local volume
     )
     model.to(select_device())
     model.train()
-    
-    
+
     # Prepare DataLoader
     dataloader = DataLoader(
         processed_data, batch_size=batch_size, shuffle=True, collate_fn=collate_fn
     )
-    
+
     # Train model
     optimizer = AdamW(model.parameters(), lr=lr)
     train_model(
         model, dataloader, optimizer, num_epochs, select_device(), mask_token_id
     )
-    
+
     print("Training complete. Saving model...")
     from huggingface_hub import login
-    login(token="")
+
+    login(token=os.environ["HUGGINGFACE_TOKEN"])
     model.push_to_hub("pupipatsk/llada-thaisum-finetuned")

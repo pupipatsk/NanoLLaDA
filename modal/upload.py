@@ -2,6 +2,8 @@ from pathlib import Path
 
 import modal
 
+app = modal.App("model-downloader")
+
 # create a Volume, or retrieve it if it exists
 volume = modal.Volume.from_name("model-weights-vol", create_if_missing=True)
 MODEL_DIR = Path("/models")
@@ -14,7 +16,8 @@ download_image = (
 )
 
 # define dependencies for running model
-inference_image =  modal.Image.debian_slim().pip_install("transformers")
+inference_image = modal.Image.debian_slim().pip_install("transformers")
+
 
 @app.function(
     volumes={MODEL_DIR: volume},  # "mount" the Volume, sharing it with your function
