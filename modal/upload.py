@@ -2,6 +2,8 @@ from pathlib import Path
 
 import modal
 
+app = modal.App("model-downloader")
+
 # create a Volume, or retrieve it if it exists
 volume = modal.Volume.from_name("model-weights-vol", create_if_missing=True)
 MODEL_DIR = Path("/models")
@@ -14,16 +16,17 @@ download_image = (
 )
 
 # define dependencies for running model
-inference_image =  modal.Image.debian_slim().pip_install("transformers")
+inference_image = modal.Image.debian_slim().pip_install("transformers")
+
 
 @app.function(
     volumes={MODEL_DIR: volume},  # "mount" the Volume, sharing it with your function
     image=download_image,  # only download dependencies needed here
 )
 def download_model(
-    repo_id: str="hf-internal-testing/tiny-random-GPTNeoXForCausalLM",
-    revision: str=None,  # include a revision to prevent surprises!
-    ):
+    repo_id: str = "GSAI-ML/LLaDA-8B-Instruct",
+    revision: str = None,  # include a revision to prevent surprises!
+):
     from huggingface_hub import snapshot_download
 
     snapshot_download(repo_id=repo_id, local_dir=MODEL_DIR / repo_id)
