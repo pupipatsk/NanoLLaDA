@@ -75,7 +75,7 @@ def format_llada_prompt(example, tokenizer):
 
 def load_and_preprocess_data(sample_size: int = 100) -> tuple:
     """Loads and preprocesses the dataset, saving tokenized data to disk."""
-    train_data_file = os.path.join(DATA_DIR, "train100.csv")
+    train_data_file = os.path.join(DATA_DIR, "train.csv")
     dataset_dict = load_dataset_from_csv(train_file=train_data_file, sample_size=sample_size)
     tokenizer = AutoTokenizer.from_pretrained(
         model_path,
