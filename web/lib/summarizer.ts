@@ -2,7 +2,7 @@ const summarize = async (input: string) => {
     const response = await fetch(process.env.NEXT_PUBLIC_API_URL!, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: input })
+        body: JSON.stringify({ prompt: 'สรุปข้อความต่อไปนี้:\n' + input })
     });
 
     if (!response.ok) throw new Error('Failed to get summary');
