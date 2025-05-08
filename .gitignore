@@ -546,11 +546,8 @@ $RECYCLE.BIN/
 # --- Custom --- #
 /data/thaisum
 /data/raw
-<<<<<<< Updated upstream
 
 /.deepeval
-=======
 notebooks/.deepeval-cache.json
 notebooks/.deepeval_telemetry.txt
 notebooks/temp_test_run_data.json
->>>>>>> Stashed changes
