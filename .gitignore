@@ -548,3 +548,6 @@ $RECYCLE.BIN/
 /data/raw
 
 /.deepeval
+notebooks/.deepeval-cache.json
+notebooks/.deepeval_telemetry.txt
+notebooks/temp_test_run_data.json
