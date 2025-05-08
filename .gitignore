@@ -546,3 +546,5 @@ $RECYCLE.BIN/
 # --- Custom --- #
 /data/thaisum
 /data/raw
+
+/.deepeval
