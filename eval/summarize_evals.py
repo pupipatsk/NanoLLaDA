@@ -36,15 +36,34 @@ def plot_histogram(scores, filename, title):
     plt.savefig(filename)
     plt.close()
 
-def plot_boxplot(scores, filename, title, labels=None):
-    """Generate and save a box plot for the scores."""
+def plot_combined_histogram(scores_list, filename, title, labels, fontsize=12):
+    """Generate and save a combined histogram for multiple score datasets."""
+    plt.figure(figsize=(10, 6))
+    colors = plt.cm.tab10(np.linspace(0, 1, len(scores_list)))  # Generate distinct colors
+    for scores, label, color in zip(scores_list, labels, colors):
+        plt.hist(scores, bins=20, alpha=0.5, label=label, color=color, edgecolor='black')
+    plt.title(f"Combined Histogram of Scores: {title}", fontsize=fontsize)
+    plt.xlabel("Score", fontsize=fontsize)
+    plt.ylabel("Frequency", fontsize=fontsize)
+    plt.xticks(fontsize=fontsize-2)
+    plt.yticks(fontsize=fontsize-2)
+    plt.legend(fontsize=fontsize-2)
+    plt.grid(True, alpha=0.3)
+    plt.savefig(filename)
+    plt.close()
+
+def plot_boxplot(scores, filename, title, labels=None, fontsize=12):
+    """Generate and save a box plot for the scores with customizable font size."""
     plt.figure(figsize=(10, 6))
     if labels:
         plt.boxplot(scores, labels=labels)
     else:
         plt.boxplot(scores)
-    plt.title(f"Box Plot of Scores: {title}")
-    plt.ylabel("Score")
+    plt.title(f"Box Plot of Scores: {title}", fontsize=fontsize)
+    plt.ylabel("Score", fontsize=fontsize)
+    plt.xlabel("Files", fontsize=fontsize) if labels else None
+    plt.xticks(fontsize=fontsize-2) if labels else None
+    plt.yticks(fontsize=fontsize-2)
     plt.grid(True, alpha=0.3)
     plt.savefig(filename)
     plt.close()
@@ -103,20 +122,31 @@ def main():
                 file
             )
 
-            # Store scores for combined box plot
+            # Store scores for combined visualizations
             all_scores.append(df['score'])
             all_labels.append(file)
 
         except Exception as e:
             report_content.append(f"Error processing file: {e}\n")
 
-    # Generate combined box plot for all files
+    # Generate combined visualizations for all files with smaller font size
     if len(all_scores) > 0:
+        # Combined box plot
         plot_boxplot(
             all_scores,
             os.path.join(VISUAL_DIR, "combined_boxplot.png"),
             "Comparison of Scores Across All Files",
-            labels=[os.path.basename(label).replace('.csv', '') for label in all_labels]
+            labels=[os.path.basename(label).replace('score-', '').replace('.csv', '') for label in all_labels],
+            fontsize=10
+        )
+
+        # Combined histogram
+        plot_combined_histogram(
+            all_scores,
+            os.path.join(VISUAL_DIR, "combined_histogram.png"),
+            "Comparison of Score Distributions Across All Files",
+            labels=[os.path.basename(label).replace('score-', '').replace('.csv', '') for label in all_labels],
+            fontsize=10
         )
 
     # Write the report to a file
