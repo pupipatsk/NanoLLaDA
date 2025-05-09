@@ -46,6 +46,24 @@ Min: 0.0000
 Max: 0.8000
 Count: 100
 
+File: score-test-100-1024-generated-fine-tuned-20k-dp.csv
+----------------------------------------
+Mean: 0.3517
+Median: 0.3333
+Std: 0.2206
+Min: 0.0000
+Max: 0.8000
+Count: 100
+
+File: score-test-100-1024-generated-fine-tuned-30k-dp.csv
+----------------------------------------
+Mean: 0.3105
+Median: 0.3000
+Std: 0.2199
+Min: 0.0000
+Max: 0.7000
+Count: 100
+
 File: score-typhoon_inference.csv
 ----------------------------------------
 Mean: 0.6138

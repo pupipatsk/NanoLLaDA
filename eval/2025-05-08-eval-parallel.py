@@ -23,7 +23,7 @@ API_KEY = os.getenv("GEMINI_API_KEY")
 # ]
 
 INPUT_FILES = [
-    "data/langchain-map-reduce.csv",
+    "data/test-100-1024-generated-fine-tuned-30k-dp.csv",
 ]
 
 # Generate output file paths with 'score-' prefix in the score directory
