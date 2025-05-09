@@ -52,6 +52,7 @@ def plot_boxplot(scores, filename, title, labels=None):
 def main():
     # Ensure visualization directory exists
     ensure_directory_exists(VISUAL_DIR)
+    ensure_directory_exists(os.path.dirname(REPORT_FILE))
 
     # Initialize report content
     report_content = ["Summary of Scores in data/score Folder\n", "="*40 + "\n"]
