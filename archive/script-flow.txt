@@ -1,0 +1,184 @@
+Current slide flow:
+- Cover
+- Motivating Work: Diffusion as an Alternative to Autoregression
+- Implementation Details of Prior Work
+- Results from Prior Work
+- Objective of This Study
+- Experimental Setup
+- Results: Vanilla vs FT (LLaDA)
+- Results: Vanilla vs FT vs Typhoon vs Gemini
+- Effect of Orchestration (MapReduce vs Refine)
+- Scaling Experiments: SmallFT, SmallBase
+- Conclusion
+- 
+
+
+
+
+Certainly. Below is the **refined slide structure** with a **more academic, neutral tone**, suitable for expert AI researchers and professors. The structure remains consistent with your storytelling logic and fully addresses the ML paper checklist.
+
+---
+
+### **Slide 1: Title Slide**
+
+**Title**: *NanoLLaDA: Benchmarking Diffusion vs Autoregressive Models*
+**Key Points**:
+
+* NLP Systems 2025 Final Project, Chulalongkorn University
+* Contributors: \[Team Members]
+* Date of presentation
+
+---
+
+### **Slide 2: Motivation & Problem Statement**
+
+**Title**: *Motivation*
+**Key Points**:
+
+* **Limitations of Autoregressive Models (ARMs)**
+
+  * Sequential generation introduces latency and degrades context retention in long sequences.
+* **Alternative Modeling Approach**
+
+  * LLaDA applies a diffusion-based probabilistic formulation with bidirectional masking.
+* **Application Scope**
+
+  * Thai document summarization poses unique challenges in abstraction and long-range coherence.
+
+---
+
+### **Slide 3: Research Objectives**
+
+**Title**: *Research Questions*
+**Key Points**:
+
+* Assess performance of fine-tuned LLaDA compared to baseline and AR alternatives.
+* Evaluate hybrid models (e.g., Gemini, Typhoon) integrating AR and diffusion features.
+* Analyze the impact of orchestration strategies in LangChain pipelines.
+* Investigate scaling behavior in low-resource variants (SmallAR, SmallFT).
+
+---
+
+### **Slide 4: Methodology Overview**
+
+**Title**: *Experimental Setup*
+**Key Points**:
+
+* **Training Paradigm**: Supervised fine-tuning (SFT) of pretrained diffusion-based LLaDA.
+* **Model Variants**:
+
+  * Vanilla, FT (LLaDA), SmallFT, SmallAR, Gemini, Typhoon.
+* **Pipeline Strategies**:
+
+  * LangChain: MapReduce vs Refine.
+* **Evaluation Protocol**:
+
+  * Average over 100 inference runs per model for statistical reliability.
+
+---
+
+### **Slide 5: Dataset Description**
+
+**Title**: *ThaiSum Dataset*
+**Key Points**:
+
+* Source: Thai news outlets (Thairath, ThaiPBS, etc.)
+* Size: \~358k train / 11k validation / 11k test samples
+* Characteristics:
+
+  * Avg. article length ≈ 530 words; avg. summary ≈ 37 words
+  * > 400k unique tokens; high lexical variety
+* No alignment heuristics used in model training
+
+---
+
+### **Slide 6: Comparison – Vanilla vs Fine-Tuned**
+
+**Title**: *Effect of Fine-Tuning on LLaDA*
+**Key Points**:
+
+* FT version of LLaDA improves over the vanilla baseline on key metrics.
+* Observed improvements in summary fluency and information retention.
+* Reduction in prompt-truncation issues noted during qualitative inspection.
+
+---
+
+### **Slide 7: Model Comparison – Full Benchmark**
+
+**Title**: *Comparison Across Model Variants*
+**Key Points**:
+
+* Gemini shows consistent performance advantage; uses AR-diffusion hybrid decoding.
+* Typhoon balances generation quality and latency via partial autoregression.
+* LLaDA-FT remains competitive among non-AR models.
+* Performance variability aligns with architectural differences.
+
+---
+
+### **Slide 8: LangChain Strategy Evaluation**
+
+**Title**: *Orchestration Strategy Impact*
+**Key Points**:
+
+* Refine pipeline yields more coherent summaries due to retained intermediate context.
+* MapReduce offers faster execution and better parallelism at some cost to output consistency.
+* Performance trade-offs depend on available memory and inference constraints.
+
+---
+
+### **Slide 9: Low-Resource Variants**
+
+**Title**: *Scaling Experiments with Small Models*
+**Key Points**:
+
+* FT variants perform better than corresponding base or autoregressive models.
+* SmallAR underperforms in long-input settings due to sequential limitations.
+* Smaller models are faster but exhibit limited abstraction capabilities.
+
+---
+
+### **Slide 10: Key Findings**
+
+**Title**: *Summary of Results*
+**Key Points**:
+
+* Diffusion-based LLaDA demonstrates performance comparable to AR baselines in Thai summarization.
+* LangChain orchestration significantly affects downstream quality.
+* Hybrid decoding models (Gemini, Typhoon) present competitive alternatives to pure AR or diffusion approaches.
+
+---
+
+### **Slide 11: Practical Considerations**
+
+**Title**: *Resource and Engineering Notes*
+**Key Points**:
+
+* Pretraining cost: \~0.13M H800 GPU hours (2.3T tokens).
+* SFT performed without hyperparameter tuning (fixed LR, batch size).
+* Inference: LLaDA is slower than ARMs due to multi-step sampling and lack of KV caching.
+* Training failures (e.g., NaN loss) observed once during 1.2T tokens; mitigated via LR scheduling.
+
+---
+
+### **Slide 12: Q\&A**
+
+**Title**: *Discussion*
+**Key Points**:
+
+* Open for comments on modeling approach, evaluation metrics, and deployment feasibility.
+* Topics of interest: sampling efficiency, model scalability, Thai-specific NLP issues.
+
+---
+
+### **Appendix (Optional)**
+
+**Title**: *Supplementary Materials*
+**Key Points**:
+
+* Evaluation details: ROUGE, fluency scores, length alignment.
+* Examples of successful and poor generations.
+* Execution profiles of LangChain pipelines.
+
+---
+
+This version aligns with academic presentation norms: it’s informative, evidence-driven, and avoids promotional or persuasive language. Would you like this formatted into a LaTeX Beamer or PowerPoint template?

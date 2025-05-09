@@ -1,6 +1,5 @@
 import asyncio
 import concurrent.futures
-import time
 import pandas as pd
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
@@ -50,7 +49,7 @@ async def progress_reporter(tasks1, tasks2, interval=5):
         done1 = sum(task.done() for task in tasks1)
         done2 = sum(task.done() for task in tasks2)
         print(f"gemini_summaries.csv: {done1}/{total1} completed")
-        print(f"test-100-1024-generated-ft.csv: {done2}/{total2} completed")
+        print(f"typhoon_inference.csv: {done2}/{total2} completed")
         if done1 == total1 and done2 == total2:
             break
         await asyncio.sleep(interval)
@@ -62,7 +61,7 @@ async def main():
 
     # Load data from both files
     df1 = pd.read_csv("data/gemini_summaries.csv")
-    df2 = pd.read_csv("data/test-100-1024-generated-ft.csv")
+    df2 = pd.read_csv("data/typhoon_inference.csv")
 
     # Prepare input-output pairs
     pairs1 = list(df1[["body", "generated"]].itertuples(index=False, name=None))
@@ -83,9 +82,18 @@ async def main():
     results1 = [task.result() for task in tasks1]
     results2 = [task.result() for task in tasks2]
 
-    # Print or process results as needed
+    # Print results
     print("Scores for gemini_summaries.csv:", results1)
-    print("Scores for test-100-1024-generated-ft.csv:", results2)
+    print("Scores for typhoon_inference.csv:", results2)
+
+    # Append scores to DataFrames
+    df1['score'] = results1
+    df2['score'] = results2
+
+    # Save updated DataFrames back to the original CSV files
+    df1.to_csv("data/score/score-gemini_summaries.csv", index=False)
+    df2.to_csv("data/score/score-typhoon_inference.csv", index=False)
+    print("Scores appended to gemini_summaries.csv and typhoon_inference.csv")
 
 if __name__ == "__main__":
     asyncio.run(main())
