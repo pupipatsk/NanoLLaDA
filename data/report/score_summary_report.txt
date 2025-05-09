@@ -1,0 +1,56 @@
+Summary of Scores in data/score Folder
+========================================
+
+File: score-gemini_summaries.csv
+----------------------------------------
+Mean: 0.5056
+Median: 0.6000
+Std: 0.2893
+Min: 0.0000
+Max: 1.0000
+Count: 100
+
+File: score-langchain-map-reduce.csv
+----------------------------------------
+Mean: 0.3217
+Median: 0.3000
+Std: 0.2154
+Min: 0.0000
+Max: 0.9000
+Count: 100
+
+File: score-langchain-refine.csv
+----------------------------------------
+Mean: 0.3192
+Median: 0.3167
+Std: 0.2294
+Min: 0.0000
+Max: 0.9000
+Count: 100
+
+File: score-test-100-1024-generated-base-08-05-2025.csv
+----------------------------------------
+Mean: 0.2828
+Median: 0.3167
+Std: 0.2431
+Min: 0.0000
+Max: 0.8000
+Count: 100
+
+File: score-test-100-1024-generated-fine-tuned-08-05-2025.csv
+----------------------------------------
+Mean: 0.3307
+Median: 0.3333
+Std: 0.2165
+Min: 0.0000
+Max: 0.8000
+Count: 100
+
+File: score-typhoon_inference.csv
+----------------------------------------
+Mean: 0.6138
+Median: 0.6833
+Std: 0.3194
+Min: 0.0000
+Max: 1.0000
+Count: 100
