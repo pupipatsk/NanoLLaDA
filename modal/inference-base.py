@@ -8,13 +8,13 @@ from transformers import AutoModel, AutoTokenizer
 import numpy as np
 import modal
 
-app = modal.App("inference-llada")
+app = modal.App("inference-llada-base")
 mask_token_id = 126336
 
 weight_volume = modal.Volume.from_name("model-weights-vol", create_if_missing=True)
 MODEL_DIR = Path("/models")
 
-model_id = "pupipatsk/llada-thaisum-finetuned"
+model_id = "GSAI-ML/LLaDA-8B-Instruct"
 model_path = os.path.join(MODEL_DIR, model_id)
 
 image = modal.Image.debian_slim(python_version="3.11").pip_install(

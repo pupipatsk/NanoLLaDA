@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Copy, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LangChainSummarizer } from "@/lib/summarizer";
 
 export default function ThaiTextSummarizer() {
   const [inputText, setInputText] = useState("");
@@ -22,24 +23,17 @@ export default function ThaiTextSummarizer() {
     setSummary("");
 
     try {
-      // Simulating an API call with a timeout
-      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // const response = await fetch('your-modal-api-endpoint', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ text: inputText })
-      // })
-      //
-      // if (!response.ok) throw new Error('Failed to get summary')
-      // const data = await response.json()
-      // setSummary(data.summary)
+      const summarizer = new LangChainSummarizer();
+      const summary = await summarizer.summarizeText(inputText);
+      setSummary(summary);
 
       // Simulated response
-      setSummary(
-        `นี่คือตัวอย่างบทสรุปสำหรับข้อความที่คุณป้อน ในการใช้งานจริง บทสรุปจะถูกสร้างโดย API ที่เชื่อมต่อกับ Modal.com`
-      );
+      // setSummary(
+      //   `นี่คือตัวอย่างบทสรุปสำหรับข้อความที่คุณป้อน ในการใช้งานจริง บทสรุปจะถูกสร้างโดย API ที่เชื่อมต่อกับ Modal.com`
+      // );
     } catch (err) {
+      alert("เกิดข้อผิดพลาดในการสรุปผล กรุณาลองใหม่");
       setError("เกิดข้อผิดพลาดในการสรุปผล กรุณาลองใหม่");
       console.error("Error fetching summary:", err);
     } finally {
