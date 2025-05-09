@@ -16,6 +16,18 @@ dotenv.load_dotenv()
 
 API_KEY = os.getenv("GEMINI_API_KEY")
 
+# Configurable input file list
+INPUT_FILES = [
+    "data/test-100-1024-generated-base-08-05-2025.csv",
+    "data/test-100-1024-generated-fine-tuned-08-05-2025.csv"
+]
+
+# Generate output file paths with 'score-' prefix in the score directory
+OUTPUT_FILES = [
+    f"data/score/score-{os.path.basename(file)}"
+    for file in INPUT_FILES
+]
+
 def evaluate_pair(pair, api_key):
     """Evaluates a single input-output pair synchronously."""
     inp, out = pair
@@ -41,59 +53,50 @@ async def evaluate_pair_async(pair, api_key, executor, loop):
     """Wraps the synchronous evaluation in an async function using a thread pool."""
     return await loop.run_in_executor(executor, evaluate_pair, pair, api_key)
 
-async def progress_reporter(tasks1, tasks2, interval=5):
-    """Periodically prints progress for both files."""
-    total1 = len(tasks1)
-    total2 = len(tasks2)
+async def progress_reporter(tasks, file_names, interval=5):
+    """Periodically prints progress for all files."""
+    total = [len(task_list) for task_list in tasks]
     while True:
-        done1 = sum(task.done() for task in tasks1)
-        done2 = sum(task.done() for task in tasks2)
-        print(f"gemini_summaries.csv: {done1}/{total1} completed")
-        print(f"typhoon_inference.csv: {done2}/{total2} completed")
-        if done1 == total1 and done2 == total2:
+        done = [sum(task.done() for task in task_list) for task_list in tasks]
+        for i, file_name in enumerate(file_names):
+            print(f"{file_name}: {done[i]}/{total[i]} completed")
+        if all(done[i] == total[i] for i in range(len(tasks))):
             break
         await asyncio.sleep(interval)
 
 async def main():
-    """Main function to process both files concurrently."""
+    """Main function to process all files concurrently."""
     executor = concurrent.futures.ThreadPoolExecutor(max_workers=10)
     loop = asyncio.get_running_loop()
 
-    # Load data from both files
-    df1 = pd.read_csv("data/gemini_summaries.csv")
-    df2 = pd.read_csv("data/typhoon_inference.csv")
+    # Load data from all input files
+    dfs = [pd.read_csv(file) for file in INPUT_FILES]
 
-    # Prepare input-output pairs
-    pairs1 = list(df1[["body", "generated"]].itertuples(index=False, name=None))
-    pairs2 = list(df2[["body", "generated"]].itertuples(index=False, name=None))
+    # Prepare input-output pairs for each file
+    pairs = [list(df[["body", "generated"]].itertuples(index=False, name=None)) for df in dfs]
 
-    # Create tasks for each pair
-    tasks1 = [asyncio.create_task(evaluate_pair_async(pair, API_KEY, executor, loop)) for pair in pairs1]
-    tasks2 = [asyncio.create_task(evaluate_pair_async(pair, API_KEY, executor, loop)) for pair in pairs2]
+    # Create tasks for each pair in each file
+    tasks = [[asyncio.create_task(evaluate_pair_async(pair, API_KEY, executor, loop)) for pair in pair_list] for pair_list in pairs]
 
     # Start progress reporter
-    progress_task = asyncio.create_task(progress_reporter(tasks1, tasks2))
+    progress_task = asyncio.create_task(progress_reporter(tasks, INPUT_FILES))
 
     # Wait for all evaluations to complete
-    await asyncio.gather(*tasks1, *tasks2)
+    await asyncio.gather(*[task for task_list in tasks for task in task_list])
     await progress_task
 
     # Collect results
-    results1 = [task.result() for task in tasks1]
-    results2 = [task.result() for task in tasks2]
+    results = [[task.result() for task in task_list] for task_list in tasks]
 
     # Print results
-    print("Scores for gemini_summaries.csv:", results1)
-    print("Scores for typhoon_inference.csv:", results2)
+    for i, file_name in enumerate(INPUT_FILES):
+        print(f"Scores for {file_name}:", results[i])
 
-    # Append scores to DataFrames
-    df1['score'] = results1
-    df2['score'] = results2
-
-    # Save updated DataFrames back to the original CSV files
-    df1.to_csv("data/score/score-gemini_summaries.csv", index=False)
-    df2.to_csv("data/score/score-typhoon_inference.csv", index=False)
-    print("Scores appended to gemini_summaries.csv and typhoon_inference.csv")
+    # Append scores to DataFrames and save to output files
+    for i, df in enumerate(dfs):
+        df['score'] = results[i]
+        df.to_csv(OUTPUT_FILES[i], index=False)
+        print(f"Scores appended to {OUTPUT_FILES[i]}")
 
 if __name__ == "__main__":
     asyncio.run(main())
