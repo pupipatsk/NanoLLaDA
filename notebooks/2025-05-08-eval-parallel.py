@@ -17,9 +17,13 @@ dotenv.load_dotenv()
 API_KEY = os.getenv("GEMINI_API_KEY")
 
 # Configurable input file list
+# INPUT_FILES = [
+#     "data/test-100-1024-generated-base-08-05-2025.csv",
+#     "data/test-100-1024-generated-fine-tuned-08-05-2025.csv"
+# ]
+
 INPUT_FILES = [
-    "data/test-100-1024-generated-base-08-05-2025.csv",
-    "data/test-100-1024-generated-fine-tuned-08-05-2025.csv"
+    "data/langchain-refine.csv",
 ]
 
 # Generate output file paths with 'score-' prefix in the score directory
