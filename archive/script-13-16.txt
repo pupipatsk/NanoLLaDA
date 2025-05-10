@@ -1,0 +1,29 @@
+13
+- Web: dynamics contextlength handle
+- shorten1024: stuff
+- exceed: lch
+- A100-40GB
+- deploy, serverless
+
+14
+- 6 models
+- llda-ft 4 dp-steps, '20'-40k
+- typhoon best
+- ft improvement, 
+- base not focus TH
+- decresing langchain, ctxlgh inc+
+- Data scale, diff-TH possible
+- slow, inf-deploy cmpr-AR
+
+15
+- high resc
+- inf late: KV cache
+- highresc+inflate: Slow Response
+- ctxlgh short+lch -> multi step loss context performance
+
+16
+- total 2200฿
+- 3 tools: gemini, typhoon (eval+bsl)
+- modal a100-80
+- +40x8(100runs-judge)
+- total gmn req 16k
