@@ -1,6 +1,8 @@
 # NanoLLaDA: Fine-tuning LLaDA
 This project involves fine-tuning LLaDA (*L*arge *La*nguage *D*iffusion with m*A*sking) as the final project for the Natural Language Processing (NLP) Systems course (2025) at Chulalongkorn University.
 
+Presentation slide: [link](https://www.canva.com/design/DAGmd7y3Q6w/xnvk69CXzSF0ix1_9dQIWQ/view?utm_content=DAGmd7y3Q6w&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h2bdf4bd793)
+
 Dataset: [nakhun/thaisum](https://huggingface.co/datasets/nakhun/thaisum)
 
 ## Setup
